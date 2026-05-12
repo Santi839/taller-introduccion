@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predicción de Deserción Estudiantil</title>
+  <style>
+    :root {
+      --bg: #edf3ff;
+      --card: rgba(255,255,255,0.96);
+      --text: #1e2a3b;
+      --muted: #5d6b80;
+      --primary: #3b78ff;
+      --primary-dark: #2b5dcc;
+      --success: #d6f3e0;
+      --success-text: #1f6038;
+      --danger: #fee7e6;
+      --danger-text: #9b1f23;
+      --border: rgba(100,116,139,0.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', Arial, sans-serif;
+      background: radial-gradient(circle at top left, rgba(59,120,255,0.16), transparent 35%),
+                  radial-gradient(circle at bottom right, rgba(59,120,255,0.08), transparent 25%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 48px auto;
+      padding: 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: 0 32px 90px rgba(45, 70, 120, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: clamp(2rem, 2.5vw, 2.75rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: #1d3166;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 10px;
+      font-weight: 700;
+      color: #2a3a5f;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(56, 86, 189, 0.16);
+      border-radius: 16px;
+      background: #fbfdff;
+      color: #1e2a3b;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(59, 120, 255, 0.6);
+      box-shadow: 0 0 0 4px rgba(59, 120, 255, 0.12);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 15px 22px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 16px 30px rgba(59, 120, 255, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 32px rgba(59, 120, 255, 0.24);
+    }
+
+    .result {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 18px;
+      font-size: 1rem;
+      line-height: 1.6;
+      border: 1px solid transparent;
+    }
+
+    .success {
+      background: var(--success);
+      color: var(--success-text);
+      border-color: rgba(31, 96, 56, 0.16);
+    }
+
+    .error {
+      background: var(--danger);
+      color: var(--danger-text);
+      border-color: rgba(155, 31, 35, 0.16);
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 0.96rem;
+      color: var(--muted);
+      background: #f8fbff;
+      border-left: 4px solid rgba(59, 120, 255, 0.35);
+      padding: 14px 18px;
+      border-radius: 14px;
+    }
+
+    .note strong {
+      color: #2a3a5f;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 20px; }
+      .container { padding: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Predicción de Deserción Estudiantil</h1>
+    <p>Completa los datos del estudiante y presiona <strong>Predecir</strong> para ver el riesgo estimado.</p>
+
+    <label for="edad">Edad</label>
+    <input id="edad" type="number" min="15" max="60" value="20" />
+
+    <label for="promedio">Promedio acumulado</label>
+    <input id="promedio" type="number" step="0.1" min="0" max="5" value="3.5" />
+
+    <label for="materias_reprobadas">Materias reprobadas</label>
+    <input id="materias_reprobadas" type="number" min="0" max="50" value="0" />
+
+    <label for="ingresos">Ingresos familiares (SMLV)</label>
+    <input id="ingresos" type="number" step="0.1" min="0" max="50" value="2.0" />
+
+    <label for="horas_estudio">Horas de estudio semanal</label>
+    <input id="horas_estudio" type="number" min="0" max="100" value="20" />
+
+    <label for="apoyo">¿Cuenta con apoyo económico?</label>
+    <select id="apoyo">
+      <option value="0">No</option>
+      <option value="1">Sí</option>
+    </select>
+
+    <button id="predictBtn">Predecir</button>
+
+    <div id="result" class="result" style="display:none"></div>
+
+    <!-- <p class="note">Para que el modelo funcione, ejecuta el servidor Python local con <strong>python server.py</strong> y abre esta página en el navegador.</p> -->
+  </div>
+
+  <script>
+    const resultEl = document.getElementById('result');
+    document.getElementById('predictBtn').addEventListener('click', async () => {
+      const payload = {
+        edad: Number(document.getElementById('edad').value),
+        promedio: Number(document.getElementById('promedio').value),
+        materias_reprobadas: Number(document.getElementById('materias_reprobadas').value),
+        ingresos: Number(document.getElementById('ingresos').value),
+        horas_estudio: Number(document.getElementById('horas_estudio').value),
+        apoyo: Number(document.getElementById('apoyo').value)
+      };
+
+      resultEl.style.display = 'block';
+      resultEl.textContent = 'Calculando...';
+      resultEl.className = 'result';
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la petición al servidor');
+        }
+
+        const data = await response.json();
+        resultEl.textContent = data.message;
+        resultEl.className = 'result ' + (data.risk === 'alto' ? 'error' : 'success');
+      } catch (error) {
+        resultEl.textContent = 'No se pudo conectar con el servidor. Asegúrate de ejecutar python server.py.';
+        resultEl.className = 'result error';
+      }
+    });
+  </script>
+</body>
+</html>
